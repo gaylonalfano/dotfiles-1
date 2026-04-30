@@ -19,9 +19,10 @@ function M.build_directory_map()
   local function _scan(glob_pattern, prefix)
     local files = vim.split(vim.fn.glob(glob_pattern), '\n')
     prefix = prefix or ''
+    local basedir = vim.fn.expand(glob_pattern:match('^([^*?{]*/)', 1))
     for _, abspath in ipairs(files) do
-      local filename = abspath:match ('([^/]+)$')  -- strip the dir part
-      map[prefix .. filename] = vim.fn.resolve(abspath)  -- resolve symlink
+      local relpath = abspath:sub(#basedir + 1)  -- path relative to basedir
+      map[prefix .. relpath] = vim.fn.resolve(abspath)  -- resolve symlink
     end
   end
   -- Scan and add common config and plugin files
@@ -29,6 +30,8 @@ function M.build_directory_map()
   _scan('~/.config/nvim/lua/plugins/*.lua', 'plugins/')
   _scan('~/.config/nvim/after/ftplugin/*.lua', 'ftplugin/')
   _scan('~/.config/nvim/after/ftplugin/*.vim', 'ftplugin/')
+  _scan('~/.config/nvim/after/queries/**/*.scm', 'queries/')
+  _scan('~/.config/nvim/after/lsp/*.lua', 'lsp/')
   _scan('~/.config/nvim/colors/*.vim', 'colors/')
   return map
 end
@@ -125,7 +128,8 @@ vim.api.nvim_create_user_command('Config',
   })
 
 vim.fn.CommandAlias('C', 'Config', 'register_cmd' and true)
-vim.fn.CommandAlias('Ftplugin', 'Config ftplugin/<C-R>=EatWhitespace()<CR>', { register_cmd = true })
-vim.fn.CommandAlias('ftplugin', 'Config ftplugin/<C-R>=EatWhitespace()<CR>', { register_cmd = false })
+vim.fn.CommandAlias('Ftplugin', 'Config ftplugin/<C-R>=&filetype<CR><C-R>=EatWhitespace()<CR>', { register_cmd = true })
+vim.fn.CommandAlias('ftplugin', 'Config ftplugin/<C-R>=&filetype<CR><C-R>=EatWhitespace()<CR>', { register_cmd = false })
+vim.fn.CommandAlias('TSQueries', 'Config queries/<C-R>=&filetype<CR>/<C-R>=EatWhitespace()<CR>', { register_cmd = true })
 
 return M
