@@ -1,5 +1,5 @@
--- :C, :Config
--- Quickly open config files that are very commonly accessed
+-- :C, :Config [query]
+-- Quickly open NVIM config files that are very commonly accessed
 
 if not pcall(require, "plenary.path") then
   return
@@ -11,8 +11,9 @@ local map = nil  -- computed lazily via build_directory_map
 
 function M.build_directory_map()
   -- Static mappings
+  ---@diagnostic disable-next-line: redefined-local
   local map = {
-    ['vimrc'] = '~/.vim/vimrc',
+    ['vimrc'] = vim.fn.expand('$HOME/.vim/vimrc'),
     ['init.lua'] = vim.fn.expand('$DOTVIM/init.lua'),
   }
   local function _scan(glob_pattern, prefix)
@@ -32,22 +33,53 @@ function M.build_directory_map()
   return map
 end
 
+--- Sort by depth (number of '/' separators) and then lexicographically.
+local function sort_by_depth_and_name(a, b)
+  local d1 = select(2, string.gsub(a, '/', ''))
+  local d2 = select(2, string.gsub(b, '/', ''))
+  if d1 ~= d2 then return d1 < d2 end
+  return a < b
+end
+
 ---@diagnostic disable-next-line: unused-local
 function M.completion(arglead, cmdline, cursorpos)
   map = map or M.build_directory_map()
   local t = vim.tbl_keys(map)
-  table.sort(t, function(e1, e2)
-    -- Sort by depth and then lexicographically.
-    local d1 = select(2, string.gsub(e1, '/', ''))
-    local d2 = select(2, string.gsub(e2, '/', ''))
-    if d1 ~= d2 then return d1 < d2 end
-    return e1 < e2
-  end)
+  table.sort(t, sort_by_depth_and_name)
   return t
 end
 
+function M.list_fzf()
+  -- entries: display only key (--with-nth 1), preview and open value ({2})
+  local entries = vim.iter(map):map(function(k, v) return k .. '\t' .. v end):totable()
+  table.sort(entries, function(a, b)
+    return sort_by_depth_and_name(a:match('^[^\t]*'), b:match('^[^\t]*'))
+  end)
+  require('fzf-lua').fzf_exec(entries, {
+    fzf_opts = {
+      ['--delimiter'] = '\t',
+      ['--with-nth'] = '1',
+      ['--prompt'] = 'NVIM Config> '
+    },
+    preview = 'bat --color=always {2}',
+    actions = {
+      ['default'] = function(selected)
+        local path = selected[1]:match('\t(.+)$')
+        vim.cmd('edit ' .. vim.fn.fnameescape(path))
+      end,
+    },
+  })
+end
+
+--- @param arg string argument passed (may contain whitespace), i.e. :Config {argument}
 function M.action(arg)
   map = map or M.build_directory_map()
+
+  if arg == '' then
+    -- Special case: without any argument, just show the directory map
+    return M.list_fzf()
+  end
+
   local aliases = {
     ['plug'] = 'plugins.lua',
     ['lazy'] = 'plugins.lua',
@@ -59,6 +91,9 @@ function M.action(arg)
   if arg == 'ftplugin/' or arg == 'ftplugin' then
     file = ('~/.config/nvim/after/ftplugin/%s%s'):format(vim.bo.filetype,
       vim.bo.filetype ~= "" and ".lua" or "")
+  end
+  if arg == 'queries/' or arg == 'queries' then
+    file = ('~/.config/nvim/after/queries/%s'):format(vim.bo.filetype)  -- actually, directory
   end
 
   if not file then
@@ -85,7 +120,7 @@ end
 vim.api.nvim_create_user_command('Config',
   function(opts) M.action(vim.trim(opts.args)) end,
   {
-    nargs = 1,
+    nargs = '?',
     complete = M.completion,
   })
 
