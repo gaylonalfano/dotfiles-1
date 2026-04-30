@@ -69,7 +69,7 @@ main() {
   # [right status] Memory Usage
   tmux set -ga status-right "#($cwd/statusbar.tmux component-ram -S $session_name)"
   # [right status] GPU Usage
-  if command -v gpustat &> /dev/null && (lsmod | grep -q nvidia); then
+  if command -v gpustat &> /dev/null && (lsmod 2>/dev/null | grep -q nvidia); then
     tmux set -ga status-right "#($cwd/statusbar.tmux component-gpu -S $session_name)"
   fi
 
