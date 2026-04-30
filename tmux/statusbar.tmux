@@ -7,8 +7,24 @@ set -o pipefail
 
 cwd="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+main_debounced() {
+  # Call `main`, but with some debouncing because the script will be called many times successively on resizing.
+  local current_tick=$(tmux show-option -gqv @statusbar_debounce_tick 2>/dev/null)
+  local new_tick=$(( ( ${current_tick:-0} + 1 ) % 10000 ))
+  tmux set-option -g @statusbar_debounce_tick "$new_tick"
+  sleep 0.2
+  # Only the last one will have the counter value unmodified, so call main() only if it's the case.
+  # (Actually, the above increment of counter is not fully atomic; however, it will be fine despite the race condition
+  # because it's okay to call `main()` to update statusbar settings, which is basically idempotent.)
+  local now_tick=$(tmux show-option -gqv @statusbar_debounce_tick 2>/dev/null)
+  if [ "$now_tick" = "$new_tick" ]; then
+    main
+  fi
+}
+
 main() {
-  tmux set-hook -g client-resized "run-shell '~/.tmux/statusbar.tmux'"
+  # NOTE: upon resizing, call the script (`main_debounced`) in the background: multiple concurrent invocations.
+  tmux set-hook -g client-resized "run-shell -b '~/.tmux/statusbar.tmux main_debounced'"
 
   # Left status: background color w.r.t per-host prompt color
   if [[ -z "$PROMPT_HOST_COLOR" ]]; then
