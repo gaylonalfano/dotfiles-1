@@ -27,6 +27,7 @@ main() {
   tmux set-hook -g client-resized "run-shell -b '~/.tmux/statusbar.tmux main_debounced'"
 
   # Left status: background color w.r.t per-host prompt color
+  local TMUX_STATUS_BG
   if [[ -z "$PROMPT_HOST_COLOR" ]]; then
       TMUX_STATUS_BG="#0087af"   # default
   elif [[ "$PROMPT_HOST_COLOR" =~ ^\#[0-9A-Za-z]{6}$ ]]; then
@@ -34,13 +35,22 @@ main() {
   else
       TMUX_STATUS_BG="colour$PROMPT_HOST_COLOR"
   fi
+  local TMUX_STATUS_HOST_BG="#0a0a0a"
 
-  # [left status] session name (#S), hostname (#h)
+  # [left status] session name (#S)
   tmux set -g status-left "\
 #[fg=#000000,bg=$TMUX_STATUS_BG,bold] #S \
-#[fg=#1c1c1c,bg=$TMUX_STATUS_BG,nobold,nounderscore,noitalics]\
-#[fg=$TMUX_STATUS_BG,bg=#1c1c1c] #h \
+#[bg=$TMUX_STATUS_HOST_BG,fg=$TMUX_STATUS_BG,nobold,nounderscore,noitalics]\
 ";
+  # [left status] hostname (#h)
+  # hostname is displayed only on remote machines (e.g. SSH)
+  tmux set -ga status-left "#[fg=$TMUX_STATUS_BG,bg=$TMUX_STATUS_HOST_BG,bold]"
+  if [[ -n "${SSH_CONNECTION:-}" ]]; then
+    tmux set -ga status-left " #h "
+  else  # localhost
+    tmux set -ga status-left " 💻 "
+  fi
+  tmux set -ga status-left "#[fg=$TMUX_STATUS_HOST_BG,bg=#1c1c1c,nobold]"
 
   # [right status]
   # Set a limit on width to suppress an excessive message '... is not ready' until the first execution is done
