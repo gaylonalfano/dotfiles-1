@@ -98,8 +98,9 @@
 	# Detect copies as well as renames
 	renames = copies
 
-	# smarter diff algorithm that is semantically more intuitive (git 1.8.2+)
-	algorithm = patience
+	# smarter diff algorithm that is semantically more intuitive
+	# Ref: https://link.springer.com/article/10.1007/s10664-019-09772-z
+	algorithm = histogram
 
 	# smarter diff on splits around blank lines (git 2.9.0+)
 	compactionHeuristic = true
