@@ -30,11 +30,25 @@ function M.setup_neotree()
       -- Use OS-level file watchers to detect filetree changes
       use_libuv_file_watcher = true,
 
-      -- #320: Do not hide hidden files when the root folder is otherwise empty
       filtered_items = {
+        -- #320: Do not hide hidden files when the root folder is otherwise empty
         force_visible_in_empty_folder = true,
+        -- Do not hide gitignored files.
+        hide_gitignored = false,
+        hide_by_name = {
+          "node_modules",
+          "__pycache__",
+        },
+        always_show = {  -- despite dotfiles (hidden)
+          ".agents", ".claude",
+          ".env",
+          ".git", ".github", ".gitignore",
+        },
+        never_show = {
+          ".DS_Store",
+          "thumbs.db",
+        },
       },
-
     },
 
     git_status = {
