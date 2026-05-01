@@ -242,7 +242,6 @@ fi
 #   but on other systems ~/.local may be treated as user-local config.
 #
 fpath=(
-  ${ZDOTDIR:-$HOME}/.zsh/prezto-themes
   $HOME/.zsh/functions
   $HOME/.local/share/zsh/site-functions
   $fpath   # e.g. /usr/local/share/zsh/site-functions
