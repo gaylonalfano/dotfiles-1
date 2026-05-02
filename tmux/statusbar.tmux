@@ -32,8 +32,10 @@ main() {
       TMUX_STATUS_BG="#0087af"   # default
   elif [[ "$PROMPT_HOST_COLOR" =~ ^\#[0-9A-Za-z]{6}$ ]]; then
       TMUX_STATUS_BG="$PROMPT_HOST_COLOR"
-  else
+  elif [[ "$PROMPT_HOST_COLOR" =~ ^[0-9]+$ ]]; then
       TMUX_STATUS_BG="colour$PROMPT_HOST_COLOR"
+  else
+      TMUX_STATUS_BG="$PROMPT_HOST_COLOR"
   fi
   local TMUX_STATUS_HOST_BG="#0a0a0a"
 
