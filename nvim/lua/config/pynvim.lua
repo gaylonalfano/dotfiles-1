@@ -198,7 +198,7 @@ local function python3_version_check()
       msg = ("python3_host_prog executable does not exist: ")
     else
       msg = ("python3 version cannot be detected: %s"):format(vim.g.python3_host_prog) ..
-        ("\nstderr:\n%s\nstdout:\n%s\n"):format(p.stderr or '', p.stdout or '')
+        ("\nstderr:\n%s\nstdout:\n%s\n"):format((p or {}).stderr or '', (p or {}).stdout or '')
     end
     do
       warning(msg .. "g:python3_host_prog = " .. vim.g.python3_host_prog)
