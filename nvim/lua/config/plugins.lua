@@ -22,13 +22,14 @@ if pcall(require, "plugins.local") then
   table.insert(PLUGIN_SPEC, { import = "plugins.local" })
 end
 
--- $VIMPLUG
--- vim.env.VIMPLUG = vim.fn.stdpath("data") .. "/lazy"
-vim.env.VIMPLUG = vim.fn.expand('$HOME/.vim/plugged')
+-- `$VIMPLUG`: It is `$HOME/.vim/plugged`.
+-- We do not use `vim.fn.stdpath("data") .. "/lazy"`
+local VIMPLUG = vim.fn.expand('$HOME/.vim/plugged')
+vim.env.VIMPLUG = VIMPLUG
 
 -- Bootstrap lazy.nvim plugin manager
 -- https://github.com/folke/lazy.nvim
-local lazypath = vim.env.VIMPLUG .. "/lazy.nvim"
+local lazypath = VIMPLUG .. "/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
     "git",
@@ -56,7 +57,7 @@ require("lazy.manage.task.fs").clean.run = function(self)
   local plugin_name = (self.plugin or {}).name or '(unknown)'
   print("[lazy.nvim] Clean operation is disabled. (lazy.manage.task.fs) plugin = " .. plugin_name .. '\n')
   local inform_user = function()
-    local msg = ("[lazy.nvim] Please check and remove `%s/%s.cloning` manually.\n"):format(vim.env.VIMPLUG, plugin_name)
+    local msg = ("[lazy.nvim] Please check and remove `%s/%s.cloning` manually.\n"):format(VIMPLUG, plugin_name)
     vim.notify(msg, vim.log.levels.ERROR, { title = 'config/plugins.lua', timeout = 10000, markdown = true })
   end
   vim.api.nvim_create_autocmd('VimEnter', { pattern = '*', callback = inform_user })
@@ -80,7 +81,7 @@ require("vim.fs")
 -- https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
 -- @see $VIMPLUG/lazy.nvim/lua/lazy/core/config.lua
 require("lazy").setup(PLUGIN_SPEC, {
-  root = vim.env.VIMPLUG,
+  root = VIMPLUG,
   defaults = {
     -- Plugins will be loaded as soon as lazy.setup()
     lazy = false,
@@ -160,7 +161,7 @@ vim.api.nvim_create_autocmd("FileType", {
       ]]
 
       -- make goto-file (gf, ]f) work, but open in a new tab
-      vim.opt_local.path:append(vim.env.VIMPLUG)
+      vim.opt_local.path:append(VIMPLUG)
       vim.keymap.set('n', 'gf', '<cmd>wincmd gf<CR>', { remap = false, buffer = true })
       vim.keymap.set('n', ']f', 'gf', { remap = true, buffer = true })
 
