@@ -133,6 +133,14 @@ function M.setup_snacks()
       -- Use as vim.ui.select()
       ui_select = true,
     },
+    --- $VIMPLUG/snacks.nvim/docs/terminal.md
+    terminal = {
+      win = {
+        bo = {
+          buflisted = true,
+        }
+      },
+    },
     --- $VIMPLUG/snacks.nvim/docs/image.md
     image = {
       enabled = true,
