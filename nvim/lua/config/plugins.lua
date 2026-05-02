@@ -54,14 +54,10 @@ require("lazy.manage").clean = function(opts)
 end
 require("lazy.manage.task.fs").clean.run = function(self)
   ---@diagnostic disable-next-line: undefined-field
-  local plugin_name = (self.plugin or {}).name or '(unknown)'
-  print("[lazy.nvim] Clean operation is disabled. (lazy.manage.task.fs) plugin = " .. plugin_name .. '\n')
-  local inform_user = function()
-    local msg = ("[lazy.nvim] Please check and remove `%s/%s.cloning` manually.\n"):format(VIMPLUG, plugin_name)
-    vim.notify(msg, vim.log.levels.ERROR, { title = 'config/plugins.lua', timeout = 10000, markdown = true })
-  end
-  vim.api.nvim_create_autocmd('VimEnter', { pattern = '*', callback = inform_user })
-  inform_user()  -- for headless execution
+  local plugin = assert(self.plugin)
+  local plugin_name = plugin.name or '(unknown)'
+  print("[lazy.nvim] Clean operation is disabled. (lazy.manage.task.fs) plugin = " .. plugin_name)
+  vim.schedule(function() M.cleanup_marker(plugin) end)
 end
 
 -- Monkey-patch: Normalize git origin, avoid unnecessary re-cloning on update
@@ -140,6 +136,26 @@ vim.tbl_map(function(p)   ---@type LazyPluginSpec
   end
 end, require("lazy").plugins())
 
+
+--- Automatically remove *.cloning marker files, because otherwise Lazy install will run on entering vim.
+--- see lazy.manage.task.fs.clean
+M.cleanup_marker = function(plugin)
+  if not plugin.name then
+    return
+  end
+  local function notify(msg, ...)
+    return #vim.api.nvim_list_uis() == 0 and print(msg) or vim.notify(msg, ...)
+  end
+  local file_to_del = vim.fs.joinpath(VIMPLUG, plugin.name .. '.cloning')
+  if not vim.uv.fs_stat(file_to_del) then return end
+  if pcall(vim.fs.rm, file_to_del) then
+    local msg = ("[lazy.nvim] removed `%s`.\n"):format(file_to_del)
+    notify(msg, vim.log.levels.WARN, { title = 'config/plugins.lua', timeout = 10000, markdown = true })
+  else
+    local msg = ("[lazy.nvim] ERROR removing `%s` Manually cleanup: %s\n"):format(file_to_del, VIMPLUG)
+    notify(msg, vim.log.levels.ERROR, { title = 'config/plugins.lua', timeout = 10000, markdown = true })
+  end
+end
 
 -- remap keymaps and configure lazy window
 require("lazy.view.config").keys.profile_filter = "<C-g>"
