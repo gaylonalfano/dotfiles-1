@@ -49,7 +49,7 @@ end
 
 -- Customize statusline components
 -- https://github.com/shadmansaleh/lualine.nvim#changing-components-in-lualine-sections
-local custom_components = {
+M.custom_components = {
   -- Override 'encoding': Don't display if encoding is UTF-8.
   encoding = function()
     local ret, _ = (vim.bo.fenc or vim.go.enc):gsub("^utf%-8$", "")  -- Note: '-' is a magic character
@@ -147,7 +147,6 @@ local custom_components = {
     return txt
   end
 }
-_G.lualine_components = custom_components
 
 -- With neovim 0.8.0+, we can use laststatus = 3 and winbar.
 -- Configure winbar here for the time being, re-using lualine components.
@@ -169,19 +168,19 @@ function M.setup_lualine()
       },
       lualine_b = {
         { 'branch', cond = min_statusline_width(120) },
-        { custom_components.overseer_status },
-        { custom_components.asyncrun_status },
+        { M.custom_components.overseer_status },
+        { M.custom_components.asyncrun_status },
       },
       lualine_c = {
-        { custom_components.neotree_path, color = { fg = '#87afdf' } },
-        { custom_components.copilot_indicator },
+        { M.custom_components.neotree_path, color = { fg = '#87afdf' } },
+        { M.custom_components.copilot_indicator },
         { 'filename', path = 1, color = { fg = '#eeeeee' } },
-        { custom_components.lsp_context, fmt = truncate(180, 60, 100, true) },
+        { M.custom_components.lsp_context, fmt = truncate(180, 60, 100, true) },
       },
       lualine_x = {
-        --{ custom_components.lsp_status, fmt = truncate(120, 20, 60, false) },
-        { custom_components.encoding,   color = { fg = '#d70000' } },
-        { custom_components.fileformat, color = { fg = '#d70000' } },
+        --{ M.custom_components.lsp_status, fmt = truncate(120, 20, 60, false) },
+        { M.custom_components.encoding,   color = { fg = '#d70000' } },
+        { M.custom_components.fileformat, color = { fg = '#d70000' } },
         { 'filetype', cond = min_statusline_width(120) },
       },
       lualine_y = { -- excludes 'progress'
@@ -217,22 +216,22 @@ function M.setup_winbar()
     sections = {
       lualine_w = {
         { 'vim.fn.winnr()', color = 'TabLineSel' },
-        { custom_components.gitobject_bufname },
+        { M.custom_components.gitobject_bufname },
         { 'filename', path = 1, color = 'lualine_winbar_filename',
           fmt = truncate(80, 20, nil, true) },
         'diagnostics',
-        { custom_components.lsp_context, fmt = truncate(80, 20, 60, true) },
+        { M.custom_components.lsp_context, fmt = truncate(80, 20, 60, true) },
         function() return ' ' end,
       },
     },
     inactive_sections = {
       lualine_w = {
         { 'vim.fn.winnr()', color = { fg = '#eeeeee' } },
-        { custom_components.gitobject_bufname },
+        { M.custom_components.gitobject_bufname },
         { 'filename', path = 1,
           fmt = truncate(80, 20, nil, true) },
         'diagnostics',
-        { custom_components.lsp_context, fmt = truncate(80, 20, 60, true) },
+        { M.custom_components.lsp_context, fmt = truncate(80, 20, 60, true) },
         function() return ' ' end,
       },
     },
