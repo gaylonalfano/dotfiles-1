@@ -148,20 +148,28 @@ M.custom_components = {
   end
 }
 
--- With neovim 0.8.0+, we can use laststatus = 3 and winbar.
--- Configure winbar here for the time being, re-using lualine components.
-local use_global_statusline = vim.fn.has('nvim-0.8.0') > 0
+
+--- :help lualine-General-component-options & README.md ()
+---@class (partial) lualine.ComponentOpts
+---@field [1] string|function
+---@field cond? function
+---@field draw_empty? boolean
+---@field color? string | { fg?: string|integer, bg?: string|integer, gui?: string }
+---@field fmt? fun(name: string, context: table):string
+
+---@alias lualine.Component lualine.ComponentOpts|string|function
 
 function M.setup_lualine()
   require('lualine').setup {
     options = {
-      globalstatus = use_global_statusline,
+      globalstatus = true,  -- &laststatus == 3
 
       -- https://github.com/shadmansaleh/lualine.nvim/blob/master/THEMES.md
       theme = 'onedark'
     },
     -- see $VIMPLUG/lualine.nvim/lua/lualine/config.lua
     -- see $VIMPLUG/lualine.nvim/lua/lualine/components
+    ---@type table<string, lualine.Component[]>
     sections = {
       lualine_a = {
         { 'mode', cond = min_statusline_width(40) },
@@ -191,6 +199,7 @@ function M.setup_lualine()
         { 'location', cond = min_statusline_width(190) },
       },
     },
+    ---@type table<string, lualine.Component[]>
     inactive_sections = {
       lualine_a = {},
       lualine_b = {},
@@ -204,15 +213,13 @@ function M.setup_lualine()
   }
 end
 
--- Now configure winbar, if laststatus = 3 is used.
+-- Now configure winbar, assuming laststatus = 3 (global statusline) is used.
 function M.setup_winbar()
-  if not use_global_statusline then
-    return false
-  end
   vim.api.nvim_set_hl(0, 'lualine_winbar_filename', { fg = '#c92a2a', bg = '#eeeeee', bold = true })
 
   -- Define winbar using lualine components (see lualine.config.apply_configuration)
   local winbar_config = {
+    ---@type table<string, lualine.Component[]>
     sections = {
       lualine_w = {
         { 'vim.fn.winnr()', color = 'TabLineSel' },
@@ -224,6 +231,7 @@ function M.setup_winbar()
         function() return ' ' end,
       },
     },
+    ---@type table<string, lualine.Component[]>
     inactive_sections = {
       lualine_w = {
         { 'vim.fn.winnr()', color = { fg = '#eeeeee' } },
