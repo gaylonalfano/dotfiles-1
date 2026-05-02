@@ -66,7 +66,18 @@ require("lazy.manage.git").get_origin = function(repo)
   local origin = require("lazy.manage.git").get_config(repo)["remote.origin.url"]
   origin = string.gsub(origin, 'git@github.com:', 'https://github.com/')
   origin = string.gsub(origin, 'https://git::@github.com/', 'https://github.com/')
+  if origin:find('/github.com/') and not origin:find('%.git$') then
+    origin = origin .. '.git'
+  end
   return origin
+end
+do
+  local _git_origin_run = require("lazy.manage.task.git").origin.run
+  require("lazy.manage.task.git").origin.run = function(self, opts)
+    -- When origin has changed, do not re-clone, but report the errors.
+    ---@diagnostic disable-next-line: param-type-mismatch
+    _git_origin_run(self, vim.tbl_deep_extend('force', opts, { check = true }))
+  end
 end
 
 -- workaround for neovim/neovim#27413
