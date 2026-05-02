@@ -133,8 +133,9 @@ post_actions += [  # fzf
     tag=$(git ls-remote --tags --exit-code --refs "$FZF_REPO" \
           | sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\/tags\/(.+)/\1/g' \
           | sort -V | tail -n1)
-    git checkout "$tag"
+    git checkout "$tag" || { echo "Checkout $tag failed. Check $HOME/.fzf" && exit 1; }
 
+    echo "Running: $ ./install --all --no-update-rc"
     ./install --all --no-update-rc
 ''']
 
@@ -454,11 +455,13 @@ for action in post_actions:
 
     log("\n", cr=False)
     log_boxed("Executing: " + action_title, color_fn=CYAN)
-    ret = subprocess.call(['bash', '-e', '-c', action],
-                          preexec_fn=lambda: signal(SIGPIPE, SIG_DFL))
-
-    if ret:
+    exitcode = subprocess.call(
+        ['bash', '-e', '-c', action],
+        preexec_fn=lambda: signal(SIGPIPE, SIG_DFL),
+    )
+    if exitcode != 0:
         errors.append(action_title)
+        log(RED("FAILED (exit code: %d): %s" % (exitcode, action_title)))
 
 log("\n")
 if errors:
