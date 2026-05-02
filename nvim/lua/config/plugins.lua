@@ -283,5 +283,31 @@ function M.load(names)
   require("lazy.core.loader").load(names, {}, { force = true })
 end
 
+---@param opts { exit?: boolean }
+function M.report_errors(opts)
+  --- see $VIMPLUG/lazy.nvim/lua/lazy/manage/checker.lua
+  local lines = {}
+
+  for _, plugin in pairs(require("lazy.core.config").plugins) do
+    if require("lazy.core.plugin").has_errors(plugin) then
+      table.insert(lines, "⚠️ " .. plugin.name)
+      for _, task in ipairs(plugin._.tasks or {}) do
+        if task.error then
+          table.insert(lines, task.error)
+        end
+      end
+    end
+  end
+  if #lines > 0 then
+    table.insert(lines, '\n')
+    local msg = table.concat(lines, '\n')
+    vim.notify(msg, vim.log.levels.ERROR)
+    if opts.exit then vim.cmd [[ cquit ]] end  -- for headless
+    return true
+  end
+  if opts.exit then vim.cmd [[ qall ]] end  -- for headless
+  return false
+end
+
 _G.lazy = require("lazy");
 return M

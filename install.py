@@ -231,9 +231,13 @@ post_actions += [  # neovim
 ''']
 
 post_actions += [  # vim-plug
-    # Run vim-plug installation
-    {'install' : 'PATH="$PATH:~/.local/bin"  nvim --headless +"Lazy! install" +qall',
-     'update'  : 'PATH="$PATH:~/.local/bin"  nvim --headless +"Lazy! update"  +qall',
+    # Run lazy.nvim installation
+    {'update'  : '''# vim plugins: install and update via Lazy
+        PATH="$PATH:~/.local/bin" \
+        nvim --headless \
+            -c "lua require('lazy').update { wait = true }" \
+            -c "lua require('config.plugins').report_errors { exit = true }"
+        ''',
      'none'    : '# vim plugins: skipped',
      }['update' if not args.skip_vimplug else 'none']
     + '\n' +
