@@ -20,6 +20,10 @@
 	# Make sure the pager terminates when it hits on the end of log
 	log = less -FE
 
+	# for some commands, it's more convenient if we don't have to press 'q' to exit the pager
+	branch = false
+	tag = false
+
 [log]
 	mailmap = true
 
