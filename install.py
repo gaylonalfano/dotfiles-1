@@ -218,13 +218,26 @@ post_actions += [  # patch and test TERMINFO
 
 post_actions += [  # install some essential packages (linux)
     '''#!/bin/bash
-    # Install node, rg, fd locally
+    # Check and install node, rg, fd locally
     export PATH="$PATH:$HOME/.local/bin"
-    type node >/dev/null 2>&1 || bin/dotfiles install node
-    type rg   >/dev/null 2>&1 || bin/dotfiles install ripgrep
-    type fd   >/dev/null 2>&1 || bin/dotfiles install fd
+    type node || bin/dotfiles install node
+    type rg   || bin/dotfiles install ripgrep
+    type fd   || bin/dotfiles install fd
+
+    # Required by neovim
+    type tree-sitter || npm install -g tree-sitter-cli'@>=0.26.0'
     '''
 ] if platform.system() == "Linux" else []
+
+post_actions += [  # macOS
+    '''#!/bin/bash
+    # macOS: homebrew installation
+    type tree-sitter || { echo "Homebrew not found. Install: https://brew.sh/" && exit 1; }
+
+    # Required by neovim
+    type tree-sitter || brew install tree-sitter-cli
+    '''
+] if platform.system() == "Darwin" else []
 
 post_actions += [  # neovim
     '''#!/bin/bash
