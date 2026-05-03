@@ -14,7 +14,7 @@ _version_check() {
     curver="${1/v/}"; targetver="$2";
     [ "$targetver" = "$(echo -e "$curver\n$targetver" | sort -V | head -n1)" ]
 }
-NVIM_RECOMMENDED_VERSION="0.11.2"
+NVIM_RECOMMENDED_VERSION="0.12.2"
 neovim_current_verson=$(nvim --version 2>/dev/null | head -n1 | cut -d' ' -f2)
 
 if which nvim >/dev/null && _version_check "$neovim_current_verson" "$NVIM_RECOMMENDED_VERSION"; then

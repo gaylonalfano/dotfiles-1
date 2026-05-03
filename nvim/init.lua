@@ -69,16 +69,16 @@ if vim.fn.has('nvim-0.11') == 0 then
   vim.o.shadafile = "NONE"
   return
 
--- TODO Deprecate NVIM 0.11 (in favor of 0.12) in 2026 H2
-elseif vim.fn.has('nvim-0.11') == 0 then
+-- NOTE: Also update ~/.dotfiles/etc/install-neovim.sh
+elseif vim.fn.has('nvim-0.12') == 0 then
   ---@type string  e.g. "NVIM v0.11.0"
   local nvim_version = vim.split(vim.api.nvim_exec2('version', { output = true }).output, '\n', { trimempty = true })[1]
   local show_warning = function()
     local like_false = function(x) return x == nil or x == "0" or x == "" end
     if not like_false(vim.env.DOTFILES_SUPPRESS_NEOVIM_VERSION_WARNING) then return end
-    local msg = 'Please upgrade to a recent version of neovim (0.11+).\n'
+    local msg = 'Please upgrade to a recent version of neovim (0.12+).\n'
     msg = msg .. 'Support for outdated neovim will be dropped soon.\n'
-    msg = msg .. 'Some features for nvim <= 0.10 might have been disabled.\n'  -- for neovim 0.11+
+    -- msg = msg .. 'Some features for nvim <= 0.10 might have been disabled.\n'
     msg = msg .. '\n' .. string.format('Try: `$ %s install neovim`', vim.fn.has('mac') > 0 and 'brew' or 'dotfiles')
     msg = msg .. '\n\n' .. (
       'If you cannot upgrade yet but want to suppress this warning,\n' ..
