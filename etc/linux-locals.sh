@@ -203,7 +203,7 @@ install_zsh() {
 install_node() {
   # Install node.js LTS at ~/.local
 
-  local NODE_VERSION
+  local NODE_VERSION="${NODE_VERSION:-}"
   if [ -z "$NODE_VERSION" ]; then
     if _version_check $(_glibc_version) 2.28; then
       # Use LTS version if GLIBC >= 2.28 (Ubuntu 20.04+)
@@ -228,9 +228,27 @@ install_node() {
   _which pnpm && pnpm --version
 
   "$NPM" install -g http-server diff-so-fancy || true;
+}
 
-  # Required by neovim
-  "$NPM" install -g tree-sitter-cli'@>=0.26.0'
+install_tree-sitter() {
+  # Ensure node
+  if ! type "npm" >/dev/null 2>&1; then
+    echo 'node/npm required. run `dotfiles install node`' && return 1;
+  fi
+
+  local TREESITTER_VERSION
+  if _version_check $(_glibc_version) 2.39; then
+    # Ubuntu 24+, tree-sitter-cli 0.26+ requires glibc 2.39+
+    TREESITTER_VERSION=">=0.26.0"
+  else
+    TREESITTER_VERSION="~0.25.0"
+  fi
+
+  set -x
+  PATH="$PATH:$HOME/.local/bin" \
+    npm install -g tree-sitter-cli"@${TREESITTER_VERSION}"
+
+  tree-sitter --version
 }
 
 install_tmux() {

@@ -225,7 +225,7 @@ post_actions += [  # install some essential packages (linux)
     type fd   || bin/dotfiles install fd
 
     # Required by neovim
-    type tree-sitter || npm install -g tree-sitter-cli'@>=0.26.0'
+    type tree-sitter || bin/dotfiles install tree-sitter
     '''
 ] if platform.system() == "Linux" else []
 
