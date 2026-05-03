@@ -225,17 +225,25 @@ post_actions += [  # install some essential packages (linux)
     type fd   || bin/dotfiles install fd
 
     # Required by neovim
-    type tree-sitter || bin/dotfiles install tree-sitter
+    if ! type tree-sitter; then
+        bin/dotfiles install tree-sitter
+    else
+        tree-sitter --version
+    fi
     '''
 ] if platform.system() == "Linux" else []
 
 post_actions += [  # macOS
     '''#!/bin/bash
     # macOS: homebrew installation
-    type tree-sitter || { echo "Homebrew not found. Install: https://brew.sh/" && exit 1; }
+    type brew || { echo "Homebrew not found. Install: https://brew.sh/" && exit 1; }
 
     # Required by neovim
-    type tree-sitter || brew install tree-sitter-cli
+    if ! type tree-sitter; then
+        brew install tree-sitter-cli
+    else
+        tree-sitter --version
+    fi
     '''
 ] if platform.system() == "Darwin" else []
 
