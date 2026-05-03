@@ -144,7 +144,8 @@
 
 [merge]
 	# https://www.ductile.systems/zdiff3/ -- better than diff3! (Git 2.35+, 2022)
-	conflictstyle = zdiff3
+	# We use 'diff3' because git 2.35 might be too new for some distro (e.g. Ubuntu 22.04)
+	conflictstyle = diff3
 
 [rebase]
 	# always perform like: git rebase --autosquash --autostash
