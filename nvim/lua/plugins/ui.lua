@@ -64,7 +64,8 @@ return {
   -- Explorer
   Plug 'nvim-neo-tree/neo-tree.nvim' {
     branch = 'main',
-    version = '>=3.34',
+    -- version = '>=3.34',
+    commit = '19d20a9', -- 3.35+ needed for nvim 0.13 due to BufModifiedSet
     init = function() vim.g.neo_tree_remove_legacy_commands = 1; end,
     config = require('config.neotree').setup_neotree,
   };
