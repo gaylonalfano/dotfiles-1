@@ -1089,15 +1089,20 @@ endif
 if has('nvim-0.4.0')
   command! CloseAllFloatingWindows   lua _G.CloseAllFloatingWindows()
 lua << EOF
+  -- similar to :fclose, but handles some edge cases better
   _G.CloseAllFloatingWindows = function()
     local closed_windows = {}
     for _, win in ipairs(vim.api.nvim_list_wins()) do
       local config = vim.api.nvim_win_get_config(win)
       if config.relative ~= "" then  -- is_floating_window?
         local bufnr = vim.api.nvim_win_get_buf(win)
+        local filetype = vim.bo[bufnr].filetype
         local info = vim.fn.bufname(bufnr)
-        if info == "" then info = vim.bo[bufnr].filetype end
-        if info ~= "scrollview" then
+        if info == "" then info = filetype end
+        if (
+          info ~= "scrollview"  -- do not remove the scrollbar
+          and filetype ~= "pager"  -- workaround neovim#39463
+        ) then
           vim.api.nvim_win_close(win, false)  -- do not force
           table.insert(closed_windows, ("%s[%d]"):format(info, win))
         end
