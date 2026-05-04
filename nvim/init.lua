@@ -56,6 +56,8 @@ vim.cmd [[
   source ~/.vimrc
 ]]
 
+require 'config.options'
+
 -- Check neovim version
 if vim.fn.has('nvim-0.11') == 0 then
   vim.cmd [[
