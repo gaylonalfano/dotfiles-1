@@ -241,10 +241,19 @@ function M.setup_fzf()
   end, { silent = true, desc = ':Grep with visual selection' } )
 
 
-  -- Git providers
+  ---------------------------------
+  --- Git providers
+  ---------------------------------
   command("Commits", {}, "FzfLua git_commits"  -- for the CWD. TODO: Support file arg
     ):nmap("<leader>FG")
   command("BCommits", {}, "FzfLua git_bcommits")  -- for the buffer.
+  command("GLog", {}, "FzfLua git_commits")  -- for the repo. TODO: args
+
+  command("GitBranches", { nargs = 0 }, "FzfLua git_branches")
+  command("Branches", { nargs = 0 }, "FzfLua git_branches")
+  command("GitWorktrees", { nargs = 0 }, "FzfLua git_worktrees")
+  command("Worktrees", { nargs = 0 }, "FzfLua git_worktrees")
+
   command("GitStatus", { nargs = 0 }, "FzfLua git_status")
     :alias("GStatus"):alias("GS"):alias("gs")
     :nmap("<leader>gs")
