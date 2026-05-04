@@ -283,7 +283,16 @@ function M.setup_fzf()
   -- (some commands are provided by telescope because it's often better with telescope)
   --    :Commands, :Maps, :Highlights
   command("Tabs", {}, "FzfLua tabs")
-  command("Buffers", { nargs = "?", complete = "buffer" }, bind_query(fzf.buffers)):alias("B")
+
+  -- :Buffers  => listed buffers.
+  -- :Buffers! => also includes unlisted buffers.
+  command("Buffers", { nargs = "?", complete = "buffer", bang = true }, function(e)
+    local opts = {
+      query = empty_then_nil(vim.trim(e.args)),
+      show_unlisted = e.bang,
+    }
+    fzf.buffers(opts)
+  end):alias("B")
   vim.keymap.set('n', '<leader>B', '<Cmd>Buffers<CR>')
   command("Colors", { nargs = "?", complete = "color" }, bind_query(fzf.colorschemes)):alias("Co")
   command("Highlights", { nargs = "?", complete = "highlight" }, bind_query(fzf.highlights)):alias("Hi")
