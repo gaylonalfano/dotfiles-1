@@ -31,9 +31,9 @@ imap('<c-j>', function()
 
   -- Deal with Ultisnips
   if vim.g.did_plugin_ultisnips then
-    if vim.fn['UltiSnips#CanExpandSnippet']() > 0 then
+    if vim.fn['UltiSnips#CanExpandSnippet']() then
       return vim.fn['UltiSnips#ExpandSnippetOrJump']()
-    elseif vim.fn['UltiSnips#CanJumpForwards']() > 0 then
+    elseif vim.fn['UltiSnips#CanJumpForwards']() then
       return vim.fn['UltiSnips#JumpForwards']()
     end
   end
