@@ -76,21 +76,46 @@ local function python3_version_async(callback)
 end
 
 
-local function determine_pip_args(pynvim_minimum_version)
-  local pip_option = "--verbose --upgrade --force-reinstall "  -- force option is important
-  local has_mac = vim.fn.has('mac') > 0
+---@return { venv: boolean, externally_managed: boolean, user_site: boolean, writable: boolean }?
+local function inspect_python_env()
+  local script = table.concat({
+    "import json, os, site, sys, sysconfig",
+    "print(json.dumps({",
+    "  'venv': sys.prefix != sys.base_prefix,",
+    "  'externally_managed': os.path.isfile(os.path.join(sysconfig.get_path('stdlib'), 'EXTERNALLY-MANAGED')),",
+    "  'user_site': bool(site.ENABLE_USER_SITE),",
+    "  'writable': os.access(sysconfig.get_path('purelib'), os.W_OK),",
+    "}))",
+  }, "\n")
+  local output = vim.fn.system({ vim.g.python3_host_prog, "-W", "ignore", "-c", script })
+  if vim.v.shell_error ~= 0 then
+    return nil
+  end
+  return vim.F.npcall(vim.json.decode, output)
+end
 
-  if not has_mac then  -- for Linux
-    -- Use '--user' option when needed
-    local py_prefix = vim.fn.trim(vim.fn.system(
-      { vim.g.python3_host_prog, "-W", "ignore", "-c", "import sys; print(sys.prefix)" }
-    ))
-    if py_prefix == "/usr" or py_prefix == "/usr/local" then
+local function determine_pip_args(pynvim_minimum_version)
+  local python = inspect_python_env()
+  if not python then
+    error("Cannot run or inspect: " .. vim.g.python3_host_prog)
+    return
+  end
+
+  local pip_option = "--verbose --upgrade --force-reinstall "  -- force option is important
+  if python.venv then
+    -- venvs are exempt from PEP 668, so no extra option is needed (nor allowed)
+  else
+    -- PEP 668: pip refuses to install into an "externally managed" environment.
+    if python.externally_managed then
+      pip_option = pip_option .. "--break-system-packages "
+    end
+    -- Install into the user site-packages (--user)
+    if python.user_site and (python.externally_managed or not python.writable) then
       pip_option = pip_option .. "--user "
     end
   end
 
-  pip_option = pip_option .. "--timeout=1 --retries=1 --break-system-packages"
+  pip_option = pip_option .. "--timeout=1 --retries=1"
   return pip_option .. " " .. ([['pynvim >= %s']]):format(pynvim_minimum_version)
 end
 
