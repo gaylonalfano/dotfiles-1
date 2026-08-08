@@ -90,8 +90,8 @@ local function determine_pip_args(pynvim_minimum_version)
     end
   end
 
-  pip_option = pip_option .. "--timeout=1 --retries=1 "
-  return pip_option .. "'pynvim >= " .. pynvim_minimum_version .. "'"
+  pip_option = pip_option .. "--timeout=1 --retries=1 --break-system-packages"
+  return pip_option .. " " .. ([['pynvim >= %s']]):format(pynvim_minimum_version)
 end
 
 -- This works "synchronously", blocks until the pip command terminates
