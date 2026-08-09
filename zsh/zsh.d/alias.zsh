@@ -105,6 +105,12 @@ function plenary-busted() {
     fi
 }
 
+# man, but open in a neovim rather than in a pager
+function manvim() {
+  MANWIDTH=80 man "$1" | col -bx | \
+    nvim -i NONE -c 'setlocal ft=man buftype=nofile ts=4 number nowrap tw=80 cc=+1' -
+}
+
 # ---------------------------------------------------------------- }}}
 # tmux {{{
 
