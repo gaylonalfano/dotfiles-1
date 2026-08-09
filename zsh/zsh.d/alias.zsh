@@ -3,6 +3,10 @@
 
 # ----------------------------------------------------------------
 # Utilities {{{
+
+# Are we on macOS? Used as `if $_macos; then ...; fi`
+[[ "$OSTYPE" == darwin* ]] && is_macos=true || is_macos=false
+
 _version_check() {
     # _version_check curver targetver: returns true (zero exit code) if $curver >= $targetver
     curver="$1"; targetver="$2";
@@ -173,7 +177,7 @@ function tmux-window-color {
 # ---------------------------------------------------------------- }}}
 # SSH {{{
 
-if [[ "$(uname)" == "Darwin" ]] && (( $+commands[iterm-tab-color] )); then
+if $is_macos && (( $+commands[iterm-tab-color] )); then
   ssh() {
     command ssh $@
     iterm-tab-color reset 2>/dev/null
@@ -264,7 +268,7 @@ function ghad() {
   local _command="clear; (date; echo ''; git lg --all --color) \
     | head -n \$((\$(tput lines) - 2)) | less -FE"
 
-  if [ `uname` == "Linux" ]; then
+  if [[ "$OSTYPE" == linux* ]]; then
     which inotifywait > /dev/null || { echo "Please install inotify-tools."; return 1; }
     trap "break" SIGINT
     bash -c "$_command"
@@ -292,7 +296,7 @@ function gsd() {
   local GIT_DIR=$(git rev-parse --git-dir)
   local _command="clear; (date; echo ''; git status --branch $@)"
 
-  if [ `uname` == "Linux" ]; then
+  if [[ "$OSTYPE" == linux* ]]; then
     which inotifywait > /dev/null || { echo "Please install inotify-tools."; return 1; }
     trap "break" SIGINT
     bash -c "$_command"
@@ -411,7 +415,7 @@ alias pytest-html='pytest --self-contained-html --html'
 alias green='green -vv'
 
 # py-spy: on macOS, root priviliege is needed
-if [[ "$(uname)" == "Darwin" ]]; then
+if $is_macos; then
   alias py-spy='sudoenv py-spy'
 fi
 
@@ -563,7 +567,7 @@ function site-packages() {
 # MacOS specific {{{
 
 # open some macOS applications
-if [[ "$(uname)" == "Darwin" ]]; then
+if $is_macos; then
 
     # Force run under Rosetta 2 (for M1 mac)
     alias rosetta2='arch -x86_64'
@@ -627,5 +631,8 @@ if (( ! $+commands[tb] )); then
 fi
 
 # }}}
+
+# Clean up file-local helper variables (don't leak into the shell)
+unset is_macos
 
 # vim: set foldmethod=marker:
