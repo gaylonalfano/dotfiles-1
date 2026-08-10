@@ -11,7 +11,9 @@
 # TL;DR) $PATH for interactive shell configs should be in ~/.zprofile
 #
 # See also: ~/.zsh/zsh.d/envs.zsh
-#
+#    (note: this is sourced only for "interactive" shells)
+# See also: ~/.zshenv.local
+#    (note: this is a good place to configure $PROMPT_HOST_COLOR)
 
 #
 # Authors:
@@ -278,6 +280,8 @@ export PYTHONSTARTUP=$HOME/.pythonrc.py
 # Disable dot files in archive
 export COPYFILE_DISABLE=true
 
+
+# Source local zshenv (if any)
 if [ -f "$HOME/.zshenv.local" ]; then
   source "$HOME/.zshenv.local"
 fi

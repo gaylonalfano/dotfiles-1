@@ -12,6 +12,9 @@
 # See https://unix.stackexchange.com/questions/71253/what-should-shouldnt-go-in-zshenv-zshrc-zlogin-zprofile-zlogout
 # See https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
 
+# For plugins, see $HOME/.zsh/plugins.zsh ($PLUGINS_SPEC)
+
+
 # Note that we have unsetopt GLOBAL_RCS in ~/.zshenv
 if [ -f /etc/zshrc ]; then source /etc/zshrc; fi
 if [ -f /etc/zsh/zshrc ]; then source /etc/zsh/zshrc; fi
@@ -52,7 +55,7 @@ autoload -Uz is-at-least
 autoload -Uz colors && colors
 
 
-# Source antidote
+# Source antidote (zsh plugin manager)
 if [[ ! -s "${ZDOTDIR:-$HOME}/.zsh/antidote/antidote.zsh" ]]; then
   echo -e "\033[0;31m antidote is not installed; please update dotfiles !"
   echo -e "\033[0;33m  Try one of the following: \
