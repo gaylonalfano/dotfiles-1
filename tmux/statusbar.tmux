@@ -103,7 +103,8 @@ main() {
     tmux set -g @agent_status_emoji ''
   fi
 
-  tmux set -g status-right "$status_right"
+  # status-right: per-session, not global (-g)
+  tmux set status-right "$status_right"
 
   # [window] number (#I), window flag (#F), window name (#W)
   #   - #F: e.g., Marked or Zoomed. If marked (i.e. #F contains 'M'), highlight it.
