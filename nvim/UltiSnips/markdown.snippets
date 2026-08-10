@@ -66,3 +66,90 @@ snippet CAUTION "GitHub Alert: [!CAUTION]"
 > ${1:Advises about risks or negative outcomes of certain actions.}
 $0
 endsnippet
+
+# slidev support
+snippet slidev "slidev frontmatter @slidev"
+---
+# https://sli.dev/custom/
+title: ${2:My presentation}
+theme: ${1:default|seriph}
+background: #ffffff
+class: text-center
+transition: none
+selectable: true
+comark: true
+hideInToc: true
+highlighter: shiki
+addons:
+  - fancy-arrow
+  - slidev-component-scroll
+---
+
+endsnippet
+snippet v "v-clicks @slidev"
+<v-clicks>
+
+$0
+
+</v-clicks>
+endsnippet
+snippet vc "a single v-click @slidev"
+<div v-click>
+
+$0
+
+</div>
+endsnippet
+snippet vs "v-switch @slidev"
+<v-switch>
+	<template #1>$1</template>
+	<template #2>$2</template>
+</v-switch>
+endsnippet
+snippet --i "include @slidev"
+---
+src: ${1:./src/path-to-subslide.md}
+---
+
+$0
+endsnippet
+snippet --f "slide separator with frontmatter @slidev"
+---
+${1:layout: center}
+---
+
+$0
+endsnippet
+snippet --2 "two-column slide @slidev"
+---
+layout: two-cols
+---
+
+$1
+
+::right::
+
+$0
+endsnippet
+snippet --2h "two-column slide with header @slidev"
+---
+layout: two-cols-header
+---
+
+$1
+
+::left::
+
+$2
+
+::right::
+
+$0
+endsnippet
+snippet --s "section divider @slidev"
+---
+layout: section
+---
+
+# $0
+endsnippet
