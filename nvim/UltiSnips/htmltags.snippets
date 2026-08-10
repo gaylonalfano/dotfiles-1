@@ -1,0 +1,18 @@
+# Common HTML tag snippets for html and markdown
+
+snippet div
+<div>
+$0
+</div>
+endsnippet
+snippet span
+<span class="$1">$0</span>
+endsnippet
+
+# Useful for Tailwind CSS, e.g. span.text.text-red => <span class="text text-red"></span>
+snippet /(i|s|u|b|span|strong|em|cite|code)\.([\w-]+(?:\.[\w-]+)*)/ "html tag (inline) with class" r
+`!p snip.rv = f'<{match.group(1)} class="{match.group(2).replace('.', ' ')}">'`$0`!p snip.rv = f'</{match.group(1)}>'`
+endsnippet
+snippet /(div|p|article|section)\.([\w-]+(?:\.[\w-]+)*)/ "html tag (block) with class" r
+`!p snip.rv = f'<{match.group(1)} class="{match.group(2).replace('.', ' ')}">'`$0`!p snip.rv = f'</{match.group(1)}>'`
+endsnippet
