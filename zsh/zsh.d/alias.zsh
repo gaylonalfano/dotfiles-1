@@ -572,6 +572,14 @@ function site-packages() {
 # ---------------------------------------------------------------- }}}
 # MacOS specific {{{
 
+if $is_macos; then
+
+  function sandbox-no-network() {
+    sandbox-exec -p '(version 1) (allow default) (deny network-outbound)' "$@"
+  }
+
+fi
+
 # open some macOS applications
 if $is_macos; then
 
