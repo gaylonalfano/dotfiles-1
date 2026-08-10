@@ -39,3 +39,12 @@
       . (expression_statement (string (string_content) @injection.content)
         (#set! injection.language "comment")
         )))
+
+; SQL methods, e.g. client.sql('''SELECT ...''')
+((call
+   function: (attribute attribute: (identifier) @_method_name)
+   arguments: (argument_list (string (string_content) @injection.content)))
+  (#eq? @_method_name "sql")
+  (#set! injection.language "sql")
+  (#set! injection.include-children)
+)

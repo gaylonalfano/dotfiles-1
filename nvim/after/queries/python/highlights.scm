@@ -33,3 +33,10 @@
         (string_start) @_string_start
         )) @string.documentation
   (#match? @_string_start "\"\"\"|'''$"))
+
+; SQL methods, e.g. client.sql('''SELECT ...''')
+((call
+   function: (attribute attribute: (identifier) @_method_name)
+   arguments: (argument_list (string (string_content) @string.injection)))
+  (#eq? @_method_name "sql")
+)
