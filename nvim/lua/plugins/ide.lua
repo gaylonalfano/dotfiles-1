@@ -156,7 +156,8 @@ return {
 
   -- AI + LLM tools
   Plug 'coder/claudecode.nvim' {
-    cmd = 'Claude',  -- lazy load when :Claude is used for the first time
+    -- lazy load when :Claude is used for the first time
+    cmd = { 'Claude', 'ClaudeCode' },
     keys = {
       { '<F8>', mode = {'n', 'i', 'x'} },
     },
