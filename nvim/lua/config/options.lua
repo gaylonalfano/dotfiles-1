@@ -6,6 +6,9 @@ local augroup = vim.api.nvim_create_augroup('config.options', { clear = true })
 -- Allow exrc
 vim.o.exrc = true
 
+-- Spell Check: skip Korean and Chinese characters
+vim.opt.spelllang = { "en", "cjk" }
+
 -- Mouse Options
 -- You should also adjust OS-level mouse/trackpad wheel speed
 -- (using LinearMouse, Scroll Reverser, macOS builtin Pref "Scroll speed", etc.)
