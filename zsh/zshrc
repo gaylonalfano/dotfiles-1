@@ -247,8 +247,10 @@ else
 fi
 
 
-# Source zsh script files after loading the zsh plugins.
-for config_file (${ZDOTDIR:-$HOME}/.zsh/zsh.d/*.zsh(N)) source $config_file
+# Source zsh script files after loading the zsh plugins (excluding *test.zsh).
+for config_file (${ZDOTDIR:-$HOME}/.zsh/zsh.d/*.zsh(N)); do
+  [[ "$config_file" != *test.zsh ]] && source $config_file
+done
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.zsh/p10k.zsh ]] || source ~/.zsh/p10k.zsh
