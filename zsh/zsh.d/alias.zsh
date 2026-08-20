@@ -207,9 +207,43 @@ alias ssh-noverify='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/n
 
 # ---------------------------------------------------------------- }}}
 # Git {{{
-# (overrides prezto's default git/alias.zsh)
+# (overrides prezto's default aliases; we no longer use prezto:git)
+# Reference: zsh/antidote-plugins/sorin-ionescu/prezto/modules/git/alias.zsh
 
-GIT_VERSION=$(git --version | awk '{print $3}')
+alias g='git'
+
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias ga='git add'
+alias gau='git add -u'
+alias gs='git status'
+alias gsu='git status -u'
+alias gcs='git show'
+
+alias gd='git diff'
+alias gdc='git diff --cached'
+alias gds='git diff --staged'
+
+alias gc='git commit --verbose'
+alias gci='git commit --verbose'
+alias gca='git commit --verbose --all'
+alias gaf='git amend-f'
+
+# git branch: show commit/refs information as well.
+alias gb='git branch -vv'
+alias gmb='git merge-base HEAD master'
+
+alias gp='git push'
+alias gpc='git push --set-upstream origin'
+alias gu='git pull'
+alias gf='git fetch --prune'
+alias gr='git rebase'
+alias gri='git rebase -i'
+alias grc='git rebase --continue'
+
+alias gw='git worktree'
+alias gwa='git worktree add'
+alias gwl='git worktree list'
 
 # The github CLI: https://cli.github.com/
 alias github='\gh'
@@ -256,17 +290,6 @@ function glb() {
   fi
   git lg --color=always --boundary "$merge_base".."$branch" "$@"
 }
-
-# git branch: show commit/refs information as well.
-alias gb='git branch -vv'
-
-alias gd='git diff --no-prefix'
-alias gdc='gd --cached --no-prefix'
-alias gds='gd --staged --no-prefix'
-alias gs='git status'
-alias gsu='gs -u'
-alias gu='git pull --autostash'
-alias gmb='git merge-base HEAD master'
 
 function ghad() {
   # Run gha (git lg) and refresh if anything in .git/ changes
