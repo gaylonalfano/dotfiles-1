@@ -422,10 +422,10 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-nnoremap <M-h> <C-w>h
-nnoremap <M-j> <C-w>j
-nnoremap <M-k> <C-w>k
-nnoremap <M-l> <C-w>l
+nmap <M-h> <C-h>
+nmap <M-j> <C-j>
+nmap <M-k> <C-k>
+nmap <M-l> <C-l>
 
 " window navigation: aware of tmux
 let g:tmux_navigator_no_mappings = 1
@@ -436,6 +436,19 @@ function! s:init_tmux_navigator() abort
     nnoremap <silent> <c-j> <Cmd>TmuxNavigateDown<cr>
     nnoremap <silent> <c-k> <Cmd>TmuxNavigateUp<cr>
     nnoremap <silent> <c-l> <Cmd>TmuxNavigateRight<cr>
+  endif
+  " Terminal mode: also tmux-aware.
+  " Note that outside tmux the plugin defines :TmuxNavigate{Left,...} as a plain `wincmd`, so these work either way.
+  " Note: We should <Cmd> (not <C-\><C-n>) so the terminal buffer stays in terminal mode.
+  if exists(':tnoremap')
+    tnoremap <silent> <c-h> <Cmd>TmuxNavigateLeft<CR>
+    tnoremap <silent> <c-j> <Cmd>TmuxNavigateDown<CR>
+    tnoremap <silent> <c-k> <Cmd>TmuxNavigateUp<CR>
+    "tnoremap <silent> <c-l> <Cmd>TmuxNavigateRight<CR>   " Ctrl-L is clear screen
+    tnoremap <silent> <m-h> <Cmd>TmuxNavigateLeft<CR>
+    tnoremap <silent> <m-j> <Cmd>TmuxNavigateDown<CR>
+    tnoremap <silent> <m-k> <Cmd>TmuxNavigateUp<CR>
+    tnoremap <silent> <m-l> <Cmd>TmuxNavigateRight<CR>
   endif
 endfunction
 
@@ -522,15 +535,16 @@ if has('nvim')
   command! -nargs=* -count -complete=shellcmd Tsplit       :exec <q-mods> .' '. (<count> ? <count> : '').'split  | :term ' . <q-args>
   command! -nargs=* -count -complete=shellcmd Tvsplit      :exec <q-mods> .' '. (<count> ? <count> : '').'vsplit | :term ' . <q-args>
 
-  " Mapping for <c-hjkl> in terminal mode
-  tmap <silent> <C-h> <C-\><C-n><cmd>wincmd h<CR>
-  tmap <silent> <C-j> <C-\><C-n><cmd>wincmd j<CR>
-  tmap <silent> <C-k> <C-\><C-n><cmd>wincmd k<CR>
-  "tmap <silent> <C-l> <C-\><C-n><cmd>wincmd l<CR>   " Ctrl-L is clear screen
-  tmap <silent> <M-h> <C-\><C-n><cmd>wincmd h<CR>
-  tmap <silent> <M-j> <C-\><C-n><cmd>wincmd j<CR>
-  tmap <silent> <M-k> <C-\><C-n><cmd>wincmd k<CR>
-  tmap <silent> <M-l> <C-\><C-n><cmd>wincmd l<CR>
+  " Mapping for <ctrl-{hjkl}> in terminal mode
+  " Note: these are overridden by vim-tmux-navigator mappings (see s:init_tmux_navigator).
+  tnoremap <silent> <C-h> <cmd>wincmd h<CR>
+  tnoremap <silent> <C-j> <cmd>wincmd j<CR>
+  tnoremap <silent> <C-k> <cmd>wincmd k<CR>
+  "tnoremap <silent> <C-l> <cmd>wincmd l<CR>   " Ctrl-L is clear screen
+  tnoremap <silent> <M-h> <cmd>wincmd h<CR>
+  tnoremap <silent> <M-j> <cmd>wincmd j<CR>
+  tnoremap <silent> <M-k> <cmd>wincmd k<CR>
+  tnoremap <silent> <M-l> <cmd>wincmd l<CR>
 
   " Ctrl-/ requires key remapping (neovim 0.8.0, see neovim/neovim#18735)
   tmap <c-/> <c-_>
