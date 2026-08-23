@@ -1,5 +1,7 @@
-# Custom alias and functions for ZSH
+# Custom alias, alias-like functions, and abbreviations for ZSH
 # see also: ~/.zsh/zsh.d/alias.local.zsh
+#
+# requires `zabbr`: ~/.zsh/zsh.d/abbr.lib.zsh
 
 # ----------------------------------------------------------------
 # Utilities {{{
@@ -12,13 +14,19 @@ _version_check() {
     curver="$1"; targetver="$2";
     [ "$targetver" = "$(echo -e "$curver\n$targetver" | sort -V | head -n1)" ]
 }
-# -----------------------------
 
-# Basic
+# ---------------------------------------------------------------- }}}
+# Basic aliases {{{
+
 alias reload!="command -v antidote 2>&1 > /dev/null && antidote reset; exec zsh --login"
-alias c='command'
-alias ZQ='exit'
-alias QQ='exit'
+
+zabbr "R!"="reload!"
+zabbr "r!"="exec zsh --login"
+zabbr "ez;"="exec zsh --login"
+
+zabbr c='command'
+zabbr ZQ='exit'
+zabbr QQ='exit'
 
 alias cp='nocorrect cp -ivp'
 alias mv='nocorrect mv -iv'
@@ -47,7 +55,7 @@ function fpath() {
 # ---------------------------------------------------------------- }}}
 # Linux Commands {{{
 
-alias j='just'
+zabbr j='just'
 
 if (( $+commands[htop] )); then
     alias top='htop'
@@ -133,16 +141,16 @@ alias tmux='tmux-wrapper'
 
 # create a new session with name
 alias tmuxnew='tmux new -s'
-alias tnew='tmuxnew'
+zabbr tnew='tmuxnew'
 # list sessions
-alias tmuxl='tmux list-sessions'
+zabbr tmuxl='tmux list-sessions'
 # tmux kill-session -t
-alias tmuxkill='tmux kill-session -t'
+zabbr tmuxkill='tmux kill-session -t'
 
 # t <session>: attach to <session> (if exists) or create a new session with the name
 # see ~/.dotfiles/bin/tmux-attach
 alias t='tmux-attach'
-alias tmuxa='tmux-attach'
+zabbr tmuxa='tmux-attach'
 
 # tmuxp
 function tmuxp {
@@ -210,40 +218,41 @@ alias ssh-noverify='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/n
 # (overrides prezto's default aliases; we no longer use prezto:git)
 # Reference: zsh/antidote-plugins/sorin-ionescu/prezto/modules/git/alias.zsh
 
-alias g='git'
+zabbr g='git'
 
-alias gco='git checkout'
-alias gcb='git checkout -b'
-alias ga='git add'
-alias gau='git add -u'
-alias gs='git status'
-alias gsu='git status -u'
-alias gcs='git show'
+zabbr gco='git checkout'
+zabbr gcb='git checkout -b'
+zabbr ga='git add'
+zabbr gau='git add -u'
+zabbr gs='git status'
+zabbr gsu='git status -u'
+zabbr gcs='git show'
 
-alias gd='git diff'
-alias gdc='git diff --cached'
-alias gds='git diff --staged'
+zabbr gd='git diff'
+zabbr gdc='git diff --cached'
+zabbr gds='git diff --staged'
 
-alias gc='git commit --verbose'
-alias gci='git commit --verbose'
-alias gca='git commit --verbose --all'
-alias gaf='git amend-f'
+zabbr gc='git commit --verbose'
+zabbr gci='git commit --verbose'
+zabbr gca='git commit --verbose --all'
+zabbr gaf='git amend-f'
+zabbr gfx='git fixup'
 
 # git branch: show commit/refs information as well.
-alias gb='git branch -vv'
-alias gmb='git merge-base HEAD master'
+zabbr gb='git branch -vv'
+zabbr gmb='git merge-base HEAD master'
 
-alias gp='git push'
-alias gpc='git push --set-upstream origin'
-alias gu='git pull'
-alias gf='git fetch --prune'
-alias gr='git rebase'
-alias gri='git rebase -i'
-alias grc='git rebase --continue'
+zabbr gp='git push'
+zabbr gpc='git push --set-upstream origin'
+zabbr gu='git pull'
+zabbr gf='git fetch --prune'
+zabbr gr='git rebase'
+zabbr gri='git rebase -i'
+zabbr grc='git rebase --continue'
 
-alias gw='git worktree'
-alias gwa='git worktree add'
-alias gwl='git worktree list'
+zabbr gw='git worktree'
+zabbr gwa='git worktree add'
+zabbr gwl='git worktree list'
 
 # The github CLI: https://cli.github.com/
 alias github='\gh'
@@ -347,8 +356,6 @@ function gsd() {
   return 0
 }
 
-alias gfx='git fixup'
-
 # using the vim plugin GV/Flog
 function _vim_gv {
     vim -c ":GV $1" -c "tabclose $"
@@ -366,6 +373,7 @@ function cd-git-root() {
   local _root; _root=$(git-root)
   [ $? -eq 0 ] && cd "$_root" || return 1;
 }
+zabbr gro='git-root'
 
 # Unalias some prezto aliases due to conflict
 if alias gpt > /dev/null; then unalias gpt; fi
