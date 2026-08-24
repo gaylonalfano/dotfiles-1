@@ -119,7 +119,9 @@ function M.setup_claude()
 
   -- Send a keystroke (e.g. answering a menu prompt) to the Claude terminal without moving focus
   local function claude_send_key(text)
-    require('claudecode.terminal').send_to_terminal(text, { submit = false, focus = false })
+    if require('claudecode').is_claude_connected() then
+      require('claudecode.terminal').send_to_terminal(text, { submit = false, focus = false })
+    end
   end
   vim.keymap.set('n', '<leader>C1', function() claude_send_key('1') end, { desc = 'Send "1" to Claude' })
   vim.keymap.set('n', '<leader>C2', function() claude_send_key('2') end, { desc = 'Send "2" to Claude' })
@@ -132,6 +134,11 @@ function M.setup_claude()
   vim.keymap.set('n', '<leader>c3', function() claude_send_key('3') end, { desc = 'Send "3" to Claude' })
   vim.keymap.set('n', '<leader>c4', function() claude_send_key('4') end, { desc = 'Send "4" to Claude' })
   vim.keymap.set('n', '<leader>c<CR>', function() claude_send_key('\n') end, { desc = 'Send <CR> (Enter) to Claude' })
+
+  vim.keymap.set('n', '<leader>1', function() claude_send_key('1') end, { desc = 'Send "1" to Claude' })
+  vim.keymap.set('n', '<leader>2', function() claude_send_key('2') end, { desc = 'Send "2" to Claude' })
+  vim.keymap.set('n', '<leader>3', function() claude_send_key('3') end, { desc = 'Send "3" to Claude' })
+  vim.keymap.set('n', '<leader>4', function() claude_send_key('4') end, { desc = 'Send "4" to Claude' })
 end
 
 
