@@ -4,6 +4,9 @@
 -- https://github.com/nvim-treesitter/nvim-treesitter/issues/655
 -- require("config.treesitter").setup_highlight("bash")
 
+-- Note: syntax customization lives in nvim/after/syntax/zsh.vim,
+-- because syntax files are sourced *after* ftplugin and would clear any syn commands here.
+
 -- Tab size
 vim.opt_local.ts = 2
 vim.opt_local.sts = 2
