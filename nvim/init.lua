@@ -138,6 +138,9 @@ require 'config.folding'
 -- Neovim 0.12+, :help vim._extui
 require('config.ui').setup_extui()
 
+-- Neovim 0.13+, :help multicursor
+require('config.multicursor').setup()
+
 -- Source local-only lua configs (not git tracked)
 if vim.fn.filereadable(vim.fn.expand('~/.config/nvim/lua/config/local.lua')) > 0 then
   require 'config.local'
