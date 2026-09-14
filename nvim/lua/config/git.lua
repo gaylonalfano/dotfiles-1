@@ -330,6 +330,21 @@ function M.setup_diffview()
   _G.diffview = require('diffview')
 end
 
+--- Configs for barrettruth/diffs.nvim
+function M.init_diffs()
+  -- see :help diffs.nvim-config
+  vim.g.diffs = {
+    integrations = {
+      fugitive = true,
+      gitsigns = true,
+    },
+    highlights = {
+      treesitter = { max_lines = 2000 },  -- default: 500
+      vim = { max_lines = 500 },          -- default: 200
+    },
+  }
+end
+
 --- Create more custom git commands.
 function M._setup_git_commands()
   --- :GitThreeWayDiff

@@ -30,6 +30,9 @@ return {
     event = 'VeryLazy',
     config = require('config.git').setup_diffview,
   };
+  Plug 'barrettruth/diffs.nvim' {
+    init = require('config.git').init_diffs,
+  };
 
   Plug 'rhysd/git-messenger.vim' {
     keys = '<leader>gm',
