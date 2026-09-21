@@ -494,7 +494,7 @@ alias awklast="awk '{print \$\(NF\)}'"
 
 # ncdu: stay one the same disk (-x), use multithreading by default
 # macOS => -x is not enough, exclude /System/Volumes/Data, otherwise infinite loop
-if [[ "$(uname)" == "Darwin" ]]; then
+if $is_macos; then
   alias ncdu='ncdu -t8 -x --exclude /System/Volumes/Data'
 else
   alias ncdu='ncdu -t8 -x'
@@ -645,6 +645,9 @@ if $is_macos; then
 
 fi
 
+
+# ---------------------------------------------------------------- }}}
+# Linux: GPU {{{
 
 # default watch options
 alias watch='watch --color -n1'
