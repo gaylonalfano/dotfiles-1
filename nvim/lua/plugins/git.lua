@@ -30,7 +30,8 @@ return {
     event = 'VeryLazy',
     config = require('config.git').setup_diffview,
   };
-  Plug 'barrettruth/diffs.nvim' {
+  -- fork from https://forge.barrettruth.com/barrettruth/diffs.nvim
+  Plug 'wookayin/diffs.nvim' {
     init = require('config.git').init_diffs,
   };
 
